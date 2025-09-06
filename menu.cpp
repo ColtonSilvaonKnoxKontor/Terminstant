@@ -10,6 +10,8 @@
 #include <algorithm>
 #include <unistd.h>
 #include <cstdlib>
+#include <pwd.h>
+#include <sys/types.h>
 
 std::string Menu::defaultHelpText = "";
 int Menu::defaultHelpColorPair = 0;
@@ -308,15 +310,31 @@ void showScrollableOutput(const std::string& command, const std::string& title) 
     }
 }
 
+// Helper function to get user's home directory
+static std::string getHomeDirectory() {
+    // First try the HOME environment variable
+    const char* home = getenv("HOME");
+    if (home != nullptr) {
+        return std::string(home);
+    }
+    
+    // Fallback to getpwuid if HOME is not set
+    struct passwd* pw = getpwuid(getuid());
+    if (pw != nullptr && pw->pw_dir != nullptr) {
+        return std::string(pw->pw_dir);
+    }
+    
+    // Last resort fallback
+    return "/tmp";
+}
+
 // Current directory tracking functions
 std::string getCurrentDirectory() {
     if (currentWorkingDir.empty()) {
-        // Initialize with current working directory
-        char* cwd = getcwd(nullptr, 0);
-        if (cwd != nullptr) {
-            currentWorkingDir = std::string(cwd);
-            free(cwd);
-        }
+        // Initialize with user's home directory instead of current working directory
+        currentWorkingDir = getHomeDirectory();
+        // Also change the actual process directory to home
+        chdir(currentWorkingDir.c_str());
     }
     return currentWorkingDir;
 }
@@ -325,6 +343,12 @@ void updateCurrentDirectory(const std::string& newDir) {
     currentWorkingDir = newDir;
     // Also change the actual process directory
     chdir(newDir.c_str());
+}
+
+void initializeHomeDirectory() {
+    // Force initialization of the home directory
+    currentWorkingDir = getHomeDirectory();
+    chdir(currentWorkingDir.c_str());
 }
 
 void executeInteractiveCommand(const std::string& command, const std::string& title) {
