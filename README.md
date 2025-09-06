@@ -14,7 +14,9 @@ For compilation requirements, you will need:
 
 # How to Compile
 To compile, `make`
+
 To test, `make check`
+
 To remove object files, `make clean`
 
 # Development Status
