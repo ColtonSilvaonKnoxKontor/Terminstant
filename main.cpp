@@ -43,6 +43,7 @@ int main() {
     initializeCurses();
     setupResizeHandler();
     loadSudoSetting();
+    initializeHomeDirectory();
 
     std::vector<std::string> mainOptions = {
         "Illegal Operation",
