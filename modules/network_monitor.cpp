@@ -109,6 +109,7 @@ static void runIftopOnInterface() {
     // Get user input for interface name
     std::string interfaceName = "";
     int ch;
+    int cursorX = 2; // Starting cursor position
     
     while (true) {
         ch = getch();
@@ -127,8 +128,10 @@ static void runIftopOnInterface() {
         if (ch == 8 || ch == 127) {
             if (!interfaceName.empty()) {
                 interfaceName.pop_back();
-                mvprintw(maxLines - 3, 2 + interfaceName.length(), " "); // Clear the character
-                move(maxLines - 3, 2 + interfaceName.length()); // Move cursor back
+                cursorX--;
+                // Clear the character at current position
+                mvprintw(maxLines - 3, cursorX, " ");
+                move(maxLines - 3, cursorX);
                 refresh();
             }
             continue;
@@ -137,7 +140,9 @@ static void runIftopOnInterface() {
         // Accept alphanumeric characters and common interface characters
         if (isalnum(ch) || ch == '-' || ch == '_' || ch == '.') {
             interfaceName += (char)ch;
-            mvprintw(maxLines - 3, 2 + interfaceName.length() - 1, "%c", ch);
+            mvprintw(maxLines - 3, cursorX, "%c", ch);
+            cursorX++;
+            move(maxLines - 3, cursorX);
             refresh();
         }
     }
