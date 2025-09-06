@@ -20,6 +20,8 @@
 #include "modules/input_devices.hpp"
 #include "modules/uname_info.hpp"
 #include "modules/network_monitor.hpp"
+#include "modules/apt_package_management.hpp"
+#include "modules/ls.hpp"
 #include "menu.hpp"
 
 using namespace std;
@@ -27,6 +29,7 @@ using namespace std;
 void showHtopMenu();
 void showIllegalOperationMenu();
 void showAdministrationMenu();
+void showAptPackageManagementMenu();
 void showSystemSettingMenu();
 void showSystemInfoMenu();
 void showUtilitiesMenu();
@@ -90,20 +93,24 @@ void showIllegalOperationMenu() {
 
 void showAdministrationMenu() {
     std::vector<std::string> options = {
-        "Task Manager (htop)",
+        "Package Management via APT",
         "Sudo Settings",
+        "Task Manager (htop)",
         "Back"
     };
     Menu menu("=== Administration ===", options);
     
     // Function mapping for administration menu
     std::map<std::string, std::function<void()>> adminMenuFunctions = {
+        {"Package Management via APT", showAptPackageManagementMenu},
         {"Sudo Settings", showSudoSettingsMenu},
         {"Task Manager (htop)", showHtopMenu}
     };
     
     menu.executeMenu(adminMenuFunctions);
 }
+
+
 
 void showSystemSettingMenu() {
     std::vector<std::string> options = {
@@ -122,13 +129,15 @@ void showSystemSettingMenu() {
 
 void showUtilitiesMenu() {
     std::vector<std::string> options = {
+        "Manage Files and Folders",
         "Tar Program",
         "Back"
     };
     Menu menu("=== Utilities ===", options);
     
-    // Function mapping for utilities menu (placeholder for future implementation)
+    // Function mapping for utilities menu
     std::map<std::string, std::function<void()>> utilitiesFunctions = {
+        {"Manage Files and Folders", showLsMenu}
         // {"Tar Program", showTarProgramMenu} // Uncomment when implemented
     };
     
