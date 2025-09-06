@@ -18,74 +18,11 @@
 using namespace std;
 
 static void renderLsblkOutput() {
-	clear();
-	refresh();
-	int maxLines, maxCols;
-	getmaxyx(stdscr, maxLines, maxCols);
-
-	// Use lsblk with tree view and proper encoding
-	FILE* pipe = popen("LC_ALL=C lsblk -o NAME,MAJ:MIN,RM,SIZE,RO,TYPE,MOUNTPOINTS", "r");
-	if (pipe) {
-		char buffer[1024];
-		int line = 0;
-		while (fgets(buffer, sizeof(buffer), pipe) && line < maxLines - 2) {
-			std::string text = buffer;
-			text.erase(remove(text.begin(), text.end(), '\r'), text.end());
-			// Trim trailing newline
-			if (!text.empty() && text.back() == '\n') text.pop_back();
-			
-			// Convert UTF-8 box-drawing characters to ASCII alternatives
-			// The UTF-8 sequences are: ├─ (0xE2 0x94 0x9C 0xE2 0x94 0x80), └─ (0xE2 0x94 0x94 0xE2 0x94 0x80), │ (0xE2 0x94 0x82)
-			size_t pos = 0;
-			while ((pos = text.find("\xE2\x94\x9C\xE2\x94\x80")) != std::string::npos) {
-				text.replace(pos, 6, "|--"); // Replace ├─ with |--
-			}
-			while ((pos = text.find("\xE2\x94\x94\xE2\x94\x80")) != std::string::npos) {
-				text.replace(pos, 6, "`--"); // Replace └─ with `--
-			}
-			while ((pos = text.find("\xE2\x94\x82")) != std::string::npos) {
-				text.replace(pos, 3, "|");   // Replace │ with |
-			}
-			
-			// Truncate to fit screen width
-			if ((int)text.size() > maxCols - 1) text = text.substr(0, (size_t)(maxCols - 1));
-			mvprintw(line, 0, "%s", text.c_str());
-			line++;
-		}
-		pclose(pipe);
-	}
-	mvprintw(maxLines - 1, 0, "Press any key to continue...");
-	refresh();
-	getch();
+	showScrollableOutput("LC_ALL=C lsblk -o NAME,MAJ:MIN,RM,SIZE,RO,TYPE,MOUNTPOINTS | sed 's/├─/|--/g; s/└─/`--/g; s/│/|/g'", "=== Block Devices ===");
 }
 
 static void renderScsiDevicesOutput() {
-	clear();
-	refresh();
-	int maxLines, maxCols;
-	getmaxyx(stdscr, maxLines, maxCols);
-
-	// Use lsblk -S to show SCSI devices
-	FILE* pipe = popen("LC_ALL=C lsblk -S -o NAME,MAJ:MIN,RM,SIZE,RO,TYPE,MODEL,VENDOR", "r");
-	if (pipe) {
-		char buffer[1024];
-		int line = 0;
-		while (fgets(buffer, sizeof(buffer), pipe) && line < maxLines - 2) {
-			std::string text = buffer;
-			text.erase(remove(text.begin(), text.end(), '\r'), text.end());
-			// Trim trailing newline
-			if (!text.empty() && text.back() == '\n') text.pop_back();
-			
-			// Truncate to fit screen width
-			if ((int)text.size() > maxCols - 1) text = text.substr(0, (size_t)(maxCols - 1));
-			mvprintw(line, 0, "%s", text.c_str());
-			line++;
-		}
-		pclose(pipe);
-	}
-	mvprintw(maxLines - 1, 0, "Press any key to continue...");
-	refresh();
-	getch();
+	showScrollableOutput("LC_ALL=C lsblk -S -o NAME,MAJ:MIN,RM,SIZE,RO,TYPE,MODEL,VENDOR", "=== SCSI Devices ===");
 }
 
 static void renderNvmeDevicesOutput() {
