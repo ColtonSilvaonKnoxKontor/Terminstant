@@ -51,3 +51,4 @@ void executeInteractiveCommand(const std::string& command, const std::string& ti
 // Current directory tracking
 std::string getCurrentDirectory();
 void updateCurrentDirectory(const std::string& newDir);
+void initializeHomeDirectory();
