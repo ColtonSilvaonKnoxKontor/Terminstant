@@ -93,6 +93,7 @@ void showDetachInputDevice() {
     // Get user input for device ID with proper ESC handling
     std::string deviceId = "";
     int ch;
+    int cursorX = 2; // Starting cursor position
     
     while (true) {
         ch = getch();
@@ -111,8 +112,10 @@ void showDetachInputDevice() {
         if (ch == 8 || ch == 127) {
             if (!deviceId.empty()) {
                 deviceId.pop_back();
-                mvprintw(5, 2 + deviceId.length(), " "); // Clear the character
-                move(5, 2 + deviceId.length()); // Move cursor back
+                cursorX--;
+                // Clear the character at current position
+                mvprintw(5, cursorX, " ");
+                move(5, cursorX);
                 refresh();
             }
             continue;
@@ -121,7 +124,9 @@ void showDetachInputDevice() {
         // Only accept numeric characters
         if (ch >= '0' && ch <= '9') {
             deviceId += (char)ch;
-            mvprintw(5, 2 + deviceId.length() - 1, "%c", ch);
+            mvprintw(5, cursorX, "%c", ch);
+            cursorX++;
+            move(5, cursorX);
             refresh();
         }
     }
@@ -194,6 +199,7 @@ void showEnableDisableInputDevice() {
     // Get user input for device ID with proper ESC handling
     std::string deviceId = "";
     int ch;
+    int cursorX = 2; // Starting cursor position
     
     while (true) {
         ch = getch();
@@ -212,8 +218,10 @@ void showEnableDisableInputDevice() {
         if (ch == 8 || ch == 127) {
             if (!deviceId.empty()) {
                 deviceId.pop_back();
-                mvprintw(5, 2 + deviceId.length(), " "); // Clear the character
-                move(5, 2 + deviceId.length()); // Move cursor back
+                cursorX--;
+                // Clear the character at current position
+                mvprintw(5, cursorX, " ");
+                move(5, cursorX);
                 refresh();
             }
             continue;
@@ -222,7 +230,9 @@ void showEnableDisableInputDevice() {
         // Only accept numeric characters
         if (ch >= '0' && ch <= '9') {
             deviceId += (char)ch;
-            mvprintw(5, 2 + deviceId.length() - 1, "%c", ch);
+            mvprintw(5, cursorX, "%c", ch);
+            cursorX++;
+            move(5, cursorX);
             refresh();
         }
     }
@@ -363,6 +373,7 @@ void showTestInputDevice() {
     // Get user input for device ID with proper ESC handling
     std::string deviceId = "";
     int ch;
+    int cursorX = 2; // Starting cursor position
     
     while (true) {
         ch = getch();
@@ -381,8 +392,10 @@ void showTestInputDevice() {
         if (ch == 8 || ch == 127) {
             if (!deviceId.empty()) {
                 deviceId.pop_back();
-                mvprintw(6, 2 + deviceId.length(), " "); // Clear the character
-                move(6, 2 + deviceId.length()); // Move cursor back
+                cursorX--;
+                // Clear the character at current position
+                mvprintw(6, cursorX, " ");
+                move(6, cursorX);
                 refresh();
             }
             continue;
@@ -391,7 +404,9 @@ void showTestInputDevice() {
         // Only accept numeric characters
         if (ch >= '0' && ch <= '9') {
             deviceId += (char)ch;
-            mvprintw(6, 2 + deviceId.length() - 1, "%c", ch);
+            mvprintw(6, cursorX, "%c", ch);
+            cursorX++;
+            move(6, cursorX);
             refresh();
         }
     }
@@ -468,6 +483,7 @@ void showReattachInputDevice() {
     // Get user input for device ID with proper ESC handling
     std::string deviceId = "";
     int ch;
+    int cursorX = 2; // Starting cursor position
     
     while (true) {
         ch = getch();
@@ -486,8 +502,10 @@ void showReattachInputDevice() {
         if (ch == 8 || ch == 127) {
             if (!deviceId.empty()) {
                 deviceId.pop_back();
-                mvprintw(5, 2 + deviceId.length(), " "); // Clear the character
-                move(5, 2 + deviceId.length()); // Move cursor back
+                cursorX--;
+                // Clear the character at current position
+                mvprintw(5, cursorX, " ");
+                move(5, cursorX);
                 refresh();
             }
             continue;
@@ -496,7 +514,9 @@ void showReattachInputDevice() {
         // Only accept numeric characters
         if (ch >= '0' && ch <= '9') {
             deviceId += (char)ch;
-            mvprintw(5, 2 + deviceId.length() - 1, "%c", ch);
+            mvprintw(5, cursorX, "%c", ch);
+            cursorX++;
+            move(5, cursorX);
             refresh();
         }
     }
@@ -524,6 +544,7 @@ void showReattachInputDevice() {
     
     // Get user input for master ID with proper ESC handling
     std::string masterId = "";
+    int masterCursorX = 2; // Starting cursor position for master ID input
     
     while (true) {
         ch = getch();
@@ -542,8 +563,10 @@ void showReattachInputDevice() {
         if (ch == 8 || ch == 127) {
             if (!masterId.empty()) {
                 masterId.pop_back();
-                mvprintw(5, 2 + masterId.length(), " "); // Clear the character
-                move(5, 2 + masterId.length()); // Move cursor back
+                masterCursorX--;
+                // Clear the character at current position
+                mvprintw(5, masterCursorX, " ");
+                move(5, masterCursorX);
                 refresh();
             }
             continue;
@@ -552,7 +575,9 @@ void showReattachInputDevice() {
         // Only accept numeric characters
         if (ch >= '0' && ch <= '9') {
             masterId += (char)ch;
-            mvprintw(5, 2 + masterId.length() - 1, "%c", ch);
+            mvprintw(5, masterCursorX, "%c", ch);
+            masterCursorX++;
+            move(5, masterCursorX);
             refresh();
         }
     }
