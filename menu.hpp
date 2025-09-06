@@ -41,3 +41,13 @@ private:
 // Shared ncurses initializer to be used across all modules after returning from system() calls
 void initializeCurses();
 void setupResizeHandler();
+
+// Scrollable output function for displaying command output
+void showScrollableOutput(const std::string& command, const std::string& title = "");
+
+// Interactive command execution function for commands that require user input
+void executeInteractiveCommand(const std::string& command, const std::string& title = "");
+
+// Current directory tracking
+std::string getCurrentDirectory();
+void updateCurrentDirectory(const std::string& newDir);
