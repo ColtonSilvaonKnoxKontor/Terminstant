@@ -4,6 +4,8 @@ Terminstant is a menu-driven TUI frontend program that provides interactive way 
 # Features
 - Customizable, can change header text
 
+- You can add your own menu by creating your command with subcommand, option and argument format.
+
 # Requirements
 At this moment, only latest version of Debian-based Linux Distribution is supported.
 Fedora and Arch-based distro will work but expect that some options will not work as it need to
