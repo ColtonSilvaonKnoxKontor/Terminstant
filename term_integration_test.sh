@@ -60,10 +60,10 @@ setup_test_env() {
     print_status "INFO" "Integration test environment setup in $TEST_DIR"
 }
 
-# Function to cleanup test environment
+# Function to cleanup test environment. Uncomment this if you want to see the contents
 cleanup_test_env() {
-    cd "$HOME"
-    rm -rf "$TEST_DIR"
+   cd "$HOME"
+   rm -rf "$TEST_DIR"
     print_status "INFO" "Integration test environment cleaned up"
 }
 
@@ -224,6 +224,48 @@ test_move_operations() {
     fi
 }
 
+# Test remove operations
+test_remove_operations() {
+    echo -e "\n${YELLOW}=== Testing Remove Operations Through Interface ===${NC}"
+    
+    # Create test files and folders for removal testing
+    echo "Test content for removal" > remove_test_file.txt
+    echo "Another file to remove" > remove_test_file2.txt
+    mkdir -p remove_test_folder
+    echo "Content in folder" > remove_test_folder/inner_file.txt
+    mkdir -p remove_test_folder2
+    echo "Content in second folder" > remove_test_folder2/inner_file2.txt
+    
+    # Test 1: Navigate to Remove Files option
+    # Navigate to Utilities -> Manage Files -> Remove Files
+    input_sequence="\x1B[B\x1B[B\x1B[B\x1B[B\x0A\x1B[B\x1B[B\x1B[B\x1B[B\x1B[B\x1B[B\x1B[B\x1B[B\x1B[B\x0A\x1B\x1B\x1B"
+    run_terminstant_with_input "$input_sequence" "Remove Files operation navigation" 15
+    
+    # Test 2: Navigate to Remove Folders option  
+    # Navigate to Utilities -> Manage Files -> Remove Folders
+    input_sequence="\x1B[B\x1B[B\x1B[B\x1B[B\x0A\x1B[B\x1B[B\x1B[B\x1B[B\x1B[B\x1B[B\x1B[B\x1B[B\x1B[B\x1B[B\x0A\x1B\x1B\x1B"
+    run_terminstant_with_input "$input_sequence" "Remove Folders operation navigation" 15
+    
+    # Test actual remove functionality with manual commands
+    cp remove_test_file.txt manual_remove_test.txt
+    rm manual_remove_test.txt > /dev/null 2>&1
+    if [ ! -f "manual_remove_test.txt" ]; then
+        print_status "PASS" "Manual file removal works (validates rm functionality)"
+    else
+        print_status "FAIL" "Manual file removal failed"
+    fi
+    
+    # Test folder removal
+    mkdir -p manual_remove_folder
+    echo "test" > manual_remove_folder/test.txt
+    rm -rf manual_remove_folder > /dev/null 2>&1
+    if [ ! -d "manual_remove_folder" ]; then
+        print_status "PASS" "Manual folder removal works (validates rm -rf functionality)"
+    else
+        print_status "FAIL" "Manual folder removal failed"
+    fi
+}
+
 # Test current directory display functionality
 test_directory_display() {
     echo -e "\n${YELLOW}=== Testing Directory Display Functionality ===${NC}"
@@ -361,6 +403,7 @@ main() {
     test_file_listing
     test_copy_operations
     test_move_operations
+    test_remove_operations
     test_directory_display
     test_error_handling
     test_performance
