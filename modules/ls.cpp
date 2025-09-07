@@ -305,6 +305,34 @@ static void moveOrRenameFileFolder() {
     executeCommandWithInteractiveInput(command, "=== Move or Rename Files and Folders ===");
 }
 
+static void removeFiles() {
+    std::string files = getMultipleInputs(
+        "Enter file(s) to remove (space separated):",
+        "file1.txt file2.txt document.pdf"
+    );
+    
+    if (files.empty()) return;
+    
+    // Build command with interactive confirmation
+    std::string command = "rm -iv " + files;
+    
+    executeCommandWithInteractiveInput(command, "=== Remove Files ===");
+}
+
+static void removeFolders() {
+    std::string folders = getMultipleInputs(
+        "Enter folder(s) to remove (space separated):",
+        "folder1/ folder2/ old_directory/"
+    );
+    
+    if (folders.empty()) return;
+    
+    // Build command with recursive, interactive, and verbose flags
+    std::string command = "rm -riv " + folders;
+    
+    executeCommandWithInteractiveInput(command, "=== Remove Folders ===");
+}
+
 void showLsMenu() {
     vector<string> options = {
         "Change Directory",
@@ -316,6 +344,8 @@ void showLsMenu() {
         "List Files and Folders", 
         "Move or Rename a File or Folder",
         "Recursive Listing",
+        "Remove Files",
+        "Remove Folders",
         "Show Hidden Files",
         "Back"
     };
@@ -332,6 +362,8 @@ void showLsMenu() {
         {"List Files and Folders", renderLsOutput},
         {"Move or Rename a File or Folder", moveOrRenameFileFolder},
         {"Recursive Listing", renderLsRecursiveOutput},
+        {"Remove Files", removeFiles},
+        {"Remove Folders", removeFolders},
         {"Show Hidden Files", renderLsHiddenOutput}
     };
     
