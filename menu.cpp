@@ -161,12 +161,15 @@ void Menu::handleResize() {
 
 void Menu::sortOptions() {
     // Sort options alphabetically, case-insensitive
-    // Keep "Back" and "Exit" at the end if they exist
+    // Keep "Custom User's Menu" at the top, "Back" and "Exit" at the end
+    std::vector<std::string> topOptions;
     std::vector<std::string> sortedOptions;
     std::vector<std::string> endOptions;
     
     for (const auto& option : options) {
-        if (option == "Back" || option == "Exit") {
+        if (option == "Custom User's Menu") {
+            topOptions.push_back(option);
+        } else if (option == "Back" || option == "Exit") {
             endOptions.push_back(option);
         } else {
             sortedOptions.push_back(option);
@@ -183,10 +186,18 @@ void Menu::sortOptions() {
             return a_lower < b_lower;
         });
     
-    // Combine sorted options with end options
+    // Combine in order: top options, sorted options, end options
     options.clear();
+    options.insert(options.end(), topOptions.begin(), topOptions.end());
     options.insert(options.end(), sortedOptions.begin(), sortedOptions.end());
     options.insert(options.end(), endOptions.begin(), endOptions.end());
+}
+
+std::string Menu::getOption(int index) const {
+    if (index >= 0 && index < (int)options.size()) {
+        return options[index];
+    }
+    return "";
 }
 
 void Menu::executeMenu(const std::map<std::string, std::function<void()>>& functionMap) {
