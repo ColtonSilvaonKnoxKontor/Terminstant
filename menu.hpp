@@ -22,6 +22,9 @@ public:
     // Dynamic menu execution with function mapping
     void executeMenu(const std::map<std::string, std::function<void()>>& functionMap);
     
+    // Get option by index (after sorting)
+    std::string getOption(int index) const;
+    
 private:
     std::string title;
     std::vector<std::string> options;
