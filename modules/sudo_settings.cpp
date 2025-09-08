@@ -12,6 +12,8 @@
 #include <cstring>
 #include <fstream>
 #include <iostream>
+#include <sys/stat.h>
+#include <errno.h>
 #include "../menu.hpp"
 #include "sudo_settings.hpp"
 
@@ -19,6 +21,47 @@ using namespace std;
 
 // Global variable to track current sudo method (default to sudo)
 std::string sudo_method = "sudo -i";
+
+// Configuration constants
+static const std::string CONFIG_DIR_NAME = ".terminstant";
+static const std::string SUDO_CONFIG_FILE = "terminstant_sudo.conf";
+
+// Function to get terminstant config directory path
+static std::string getConfigDirPath() {
+    char* home = getenv("HOME");
+    if (home == nullptr) {
+        return "/tmp/" + CONFIG_DIR_NAME; // Fallback
+    }
+    return std::string(home) + "/" + CONFIG_DIR_NAME;
+}
+
+// Function to ensure config directory exists
+static bool ensureConfigDirExists() {
+    std::string configDir = getConfigDirPath();
+    
+    // Check if directory exists
+    struct stat st;
+    if (stat(configDir.c_str(), &st) == 0) {
+        if (S_ISDIR(st.st_mode)) {
+            return true; // Directory already exists
+        } else {
+            // Path exists but is not a directory
+            return false;
+        }
+    }
+    
+    // Create directory with mode 0755
+    if (mkdir(configDir.c_str(), 0755) == 0) {
+        return true;
+    }
+    
+    return false; // Failed to create directory
+}
+
+// Function to get sudo config file path
+static std::string getSudoConfigPath() {
+    return getConfigDirPath() + "/" + SUDO_CONFIG_FILE;
+}
 
 void showSudoSettingsMenu() {
     std::vector<std::string> options = {
@@ -143,8 +186,14 @@ void showCurrentSetting() {
 }
 
 void saveSudoSetting() {
-    // Save the setting to a configuration file
-    std::ofstream config_file("terminstant_sudo.conf");
+    // Ensure config directory exists
+    if (!ensureConfigDirExists()) {
+        return; // Cannot create config directory
+    }
+    
+    // Save the setting to a configuration file in the config directory
+    std::string configPath = getSudoConfigPath();
+    std::ofstream config_file(configPath);
     if (config_file.is_open()) {
         config_file << "sudo_method=" << sudo_method << std::endl;
         config_file.close();
@@ -152,8 +201,11 @@ void saveSudoSetting() {
 }
 
 void loadSudoSetting() {
-    // Load the setting from configuration file
-    std::ifstream config_file("terminstant_sudo.conf");
+    std::string newConfigPath = getSudoConfigPath();
+    std::string oldConfigPath = "terminstant_sudo.conf";
+    
+    // Try to load from new location first
+    std::ifstream config_file(newConfigPath);
     if (config_file.is_open()) {
         std::string line;
         if (std::getline(config_file, line)) {
@@ -162,6 +214,25 @@ void loadSudoSetting() {
             }
         }
         config_file.close();
+        return;
+    }
+    
+    // If new location doesn't exist, try old location for migration
+    config_file.open(oldConfigPath);
+    if (config_file.is_open()) {
+        std::string line;
+        if (std::getline(config_file, line)) {
+            if (line.find("sudo_method=") == 0) {
+                sudo_method = line.substr(12); // Remove "sudo_method=" prefix
+            }
+        }
+        config_file.close();
+        
+        // Migrate to new location
+        saveSudoSetting();
+        
+        // Remove old config file
+        std::remove(oldConfigPath.c_str());
     }
 }
 
