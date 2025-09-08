@@ -28,7 +28,7 @@ To test, `make check`
 To remove object files, `make clean`
 
 # Development Status
-In progress
+In progress, fixing huge bugs and logic error
 
 # Preview
  <p align="center"> 
