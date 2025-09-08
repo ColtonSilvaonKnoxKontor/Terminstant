@@ -14,6 +14,8 @@ SRC = main.cpp \
       modules/uname_info.cpp \
       modules/network_monitor.cpp \
       modules/apt_package_management.cpp \
+      modules/header.cpp \
+      modules/term_menu.cpp \
       menu.cpp \
 
 OBJ = $(SRC:.cpp=.o)
